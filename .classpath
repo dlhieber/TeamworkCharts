@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="C:/Program Files/Java/jdk1.8.0_151/lib/tools.jar"/>
+	<classpathentry kind="lib" path="D:/JSON-java-master/java-json.jar"/>
+	<classpathentry kind="lib" path="D:/JSON-java-master/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="D:/JSON-java-master/gson-2.6.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="D:/JSON-java-master/gson-2.6.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JCommon 1.0.23"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JFreeChart 1.0.19"/>
+	<classpathentry kind="lib" path="D:/workspace/Logo-2016-Swirl-125.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
