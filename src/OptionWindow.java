@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
@@ -18,6 +19,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.awt.event.ActionEvent;
@@ -26,6 +28,7 @@ import java.awt.Button;
 import java.awt.Color;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.JComboBox;
 
 public class OptionWindow extends JFrame {
 
@@ -48,10 +51,15 @@ public class OptionWindow extends JFrame {
 		});
 	}
 
+	private Object makeObj(final String item)  {
+	     return new Object() { public String toString() { return item; } };
+	   }
 	/**
 	 * Create the frame.
 	 * @throws ParseException 
 	 */
+	
+	
 	public OptionWindow() throws ParseException {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(OptionWindow.class.getResource("/Logo-2016-Swirl-125.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -60,12 +68,14 @@ public class OptionWindow extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{116, 75, 53, 50, 168};
+		gbl_contentPane.columnWidths = new int[]{116, 75, 0, 53, 50, 168};
 		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 1.0, 0.0, 0.0};
+		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, 0.0, 1.0};
 		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
+		JButton btnShowChart = new JButton("Show Chart");
 		
+		btnShowChart.setVisible(false);
 		JLabel lblEnterStartDate = new JLabel("Start Date (dd/mm/yyyy):");
 		GridBagConstraints gbc_lblEnterStartDate = new GridBagConstraints();
 		gbc_lblEnterStartDate.insets = new Insets(0, 0, 5, 5);
@@ -87,7 +97,7 @@ public class OptionWindow extends JFrame {
 		GridBagConstraints gbc_btnSet = new GridBagConstraints();
 		gbc_btnSet.gridwidth = 2;
 		gbc_btnSet.insets = new Insets(0, 0, 5, 0);
-		gbc_btnSet.gridx = 3;
+		gbc_btnSet.gridx = 4;
 		gbc_btnSet.gridy = 0;
 		contentPane.add(btnSet, gbc_btnSet);
 		
@@ -99,7 +109,7 @@ public class OptionWindow extends JFrame {
 		contentPane.add(lblNumberOfWeeks, gbc_lblNumberOfWeeks);
 		
 		JSpinner spinner = new JSpinner();
-		spinner.setModel(new SpinnerNumberModel(1, 1, 104, 1));
+		spinner.setModel(new SpinnerNumberModel(12, 1, 104, 1));
 		GridBagConstraints gbc_spinner = new GridBagConstraints();
 		gbc_spinner.insets = new Insets(0, 0, 5, 5);
 		gbc_spinner.gridx = 1;
@@ -110,27 +120,35 @@ public class OptionWindow extends JFrame {
 		GridBagConstraints gbc_lblNotValid = new GridBagConstraints();
 		gbc_lblNotValid.gridwidth = 2;
 		gbc_lblNotValid.insets = new Insets(0, 0, 5, 0);
-		gbc_lblNotValid.gridx = 3;
+		gbc_lblNotValid.gridx = 4;
 		gbc_lblNotValid.gridy = 1;
 		contentPane.add(lblNotValid, gbc_lblNotValid);
 		lblNotValid.setVisible(false);
-		contentPane.add(lblNewLabel, gbc_lblNewLabel);
-		
-		JLabel lblStartDateNot = new JLabel("Start Date Not Set!");
-		lblStartDateNot.setForeground(Color.RED);
-		GridBagConstraints gbc_lblStartDateNot = new GridBagConstraints();
-		gbc_lblStartDateNot.gridwidth = 2;
-		gbc_lblStartDateNot.insets = new Insets(0, 0, 5, 0);
-		gbc_lblStartDateNot.gridx = 3;
-		gbc_lblStartDateNot.gridy = 7;
-		lblStartDateNot.setVisible(false);
-		contentPane.add(lblStartDateNot, gbc_lblStartDateNot);
+	
+		JComboBox<String> comboBox = new JComboBox<String>();
+		GridBagConstraints gbc_comboBox = new GridBagConstraints();
+		gbc_comboBox.insets = new Insets(0, 0, 5, 0);
+		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
+		gbc_comboBox.gridx = 5;
+		gbc_comboBox.gridy = 2;
+		contentPane.add(comboBox, gbc_comboBox);
+		btnShowChart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(comboBox.getItemAt(comboBox.getSelectedIndex()));
+				charts.showChart(comboBox.getItemAt(comboBox.getSelectedIndex()));
+				
+			}
+		});
 		JButton btnLoadOldData = new JButton("Load Old Data");
 		btnLoadOldData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {if(charts.isStartCalendarSet()){
 						charts.getOldData((Integer)spinner.getValue());
-						
+						ArrayList<String> people=charts.getListOfPeople();
+						for(int i=0;i<people.size();i++){
+							comboBox.addItem(people.get(i));							
+						}
+						btnShowChart.setVisible(true);
 					}else{
 						lblNewLabel.setVisible(true);
 					}
@@ -141,20 +159,23 @@ public class OptionWindow extends JFrame {
 			}
 		});
 		
-		JFormattedTextField frmtdtxtfldDdmmyyyy = new JFormattedTextField(new MaskFormatter("##/##/####"));
-		frmtdtxtfldDdmmyyyy.setText("dd/mm/yyyy");
-		GridBagConstraints gbc_frmtdtxtfldDdmmyyyy = new GridBagConstraints();
-		gbc_frmtdtxtfldDdmmyyyy.gridwidth = 2;
-		gbc_frmtdtxtfldDdmmyyyy.insets = new Insets(0, 0, 5, 5);
-		gbc_frmtdtxtfldDdmmyyyy.fill = GridBagConstraints.HORIZONTAL;
-		gbc_frmtdtxtfldDdmmyyyy.gridx = 1;
-		gbc_frmtdtxtfldDdmmyyyy.gridy = 0;
-		contentPane.add(frmtdtxtfldDdmmyyyy, gbc_frmtdtxtfldDdmmyyyy);
+		btnLoadOldData.setVisible(false);
+		
+		JLabel lblStartDateNot = new JLabel("Start Date Not Set!");
+		lblStartDateNot.setForeground(Color.RED);
+		GridBagConstraints gbc_lblStartDateNot = new GridBagConstraints();
+		gbc_lblStartDateNot.gridwidth = 2;
+		gbc_lblStartDateNot.insets = new Insets(0, 0, 5, 0);
+		gbc_lblStartDateNot.gridx = 4;
+		gbc_lblStartDateNot.gridy = 7;
+		lblStartDateNot.setVisible(false);
+		contentPane.add(lblStartDateNot, gbc_lblStartDateNot);
+		
 		GridBagConstraints gbc_btnLoadOldData = new GridBagConstraints();
 		gbc_btnLoadOldData.gridwidth = 2;
 		gbc_btnLoadOldData.insets = new Insets(0, 0, 5, 5);
 		gbc_btnLoadOldData.gridx = 0;
-		gbc_btnLoadOldData.gridy = 6;
+		gbc_btnLoadOldData.gridy = 2;
 		contentPane.add(btnLoadOldData, gbc_btnLoadOldData);
 		
 		JButton btnNewButton = new JButton("Load New Data");
@@ -163,6 +184,12 @@ public class OptionWindow extends JFrame {
 				try {
 					if(charts.isStartCalendarSet()){
 						charts.getNewData((Integer)spinner.getValue());
+						
+						ArrayList<String> people=charts.getListOfPeople();
+						for(int i=0;i<people.size();i++){
+							comboBox.addItem(people.get(i));							
+						}
+						btnShowChart.setVisible(true);
 					}else{
 						lblStartDateNot.setVisible(true);
 					}
@@ -172,6 +199,29 @@ public class OptionWindow extends JFrame {
 				}
 			}
 		});
+		
+		btnNewButton.setVisible(false);
+		
+	
+		
+		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
+		gbc_btnNewButton.gridwidth = 2;
+		gbc_btnNewButton.insets = new Insets(0, 0, 5, 5);
+		gbc_btnNewButton.gridx = 0;
+		gbc_btnNewButton.gridy = 3;
+		contentPane.add(btnNewButton, gbc_btnNewButton);
+		contentPane.add(lblNewLabel, gbc_lblNewLabel);
+		
+		
+		JFormattedTextField frmtdtxtfldDdmmyyyy = new JFormattedTextField(new MaskFormatter("##/##/####"));
+		frmtdtxtfldDdmmyyyy.setText("dd/mm/yyyy");
+		GridBagConstraints gbc_frmtdtxtfldDdmmyyyy = new GridBagConstraints();
+		gbc_frmtdtxtfldDdmmyyyy.gridwidth = 3;
+		gbc_frmtdtxtfldDdmmyyyy.insets = new Insets(0, 0, 5, 5);
+		gbc_frmtdtxtfldDdmmyyyy.fill = GridBagConstraints.HORIZONTAL;
+		gbc_frmtdtxtfldDdmmyyyy.gridx = 1;
+		gbc_frmtdtxtfldDdmmyyyy.gridy = 0;
+		contentPane.add(frmtdtxtfldDdmmyyyy, gbc_frmtdtxtfldDdmmyyyy);
 		
 	btnSet.addActionListener(new ActionListener() {
 			
@@ -189,6 +239,8 @@ public class OptionWindow extends JFrame {
 					lblStartDateNot.setVisible(false);
 					lblNewLabel.setVisible(false);
 					lblNotValid.setVisible(true);
+					btnLoadOldData.setVisible(true);
+					btnNewButton.setVisible(true);
 				}catch(Exception e2){
 					lblNotValid.setVisible(true);
 				}
@@ -198,25 +250,12 @@ public class OptionWindow extends JFrame {
 			}
 		});
 		
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.gridwidth = 2;
-		gbc_btnNewButton.insets = new Insets(0, 0, 5, 0);
-		gbc_btnNewButton.gridx = 3;
-		gbc_btnNewButton.gridy = 6;
-		contentPane.add(btnNewButton, gbc_btnNewButton);
-		
-		JButton btnShowChart = new JButton("Show Chart");
-		btnShowChart.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				charts.showChart();
-			}
-		});
 		
 		
 		GridBagConstraints gbc_btnShowChart = new GridBagConstraints();
 		gbc_btnShowChart.anchor = GridBagConstraints.SOUTH;
 		gbc_btnShowChart.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnShowChart.gridwidth = 5;
+		gbc_btnShowChart.gridwidth = 6;
 		gbc_btnShowChart.gridx = 0;
 		gbc_btnShowChart.gridy = 8;
 		contentPane.add(btnShowChart, gbc_btnShowChart);
