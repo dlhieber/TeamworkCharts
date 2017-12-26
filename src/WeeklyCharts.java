@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.io.FileWriter;
@@ -72,18 +73,62 @@ public class WeeklyCharts {
 	}
 	
 
-	
+	private int daysBetween(Date d1, Date d2){
+        return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+}
+
 	private double getWeekPorportionInHours(Calendar weekStart, Calendar taskStart, Calendar taskEnd, int totalTimeInMinutes){
 		weekStart.set(weekStart.get(Calendar.YEAR), weekStart.get(Calendar.MONTH), weekStart.get(Calendar.DAY_OF_MONTH), 1, 1, 1);
 		taskStart.set(taskStart.get(Calendar.YEAR), taskStart.get(Calendar.MONTH), taskStart.get(Calendar.DAY_OF_MONTH), 1, 1, 1);
 		taskEnd.set(taskEnd.get(Calendar.YEAR), taskEnd.get(Calendar.MONTH), taskEnd.get(Calendar.DAY_OF_MONTH), 1, 1, 1);
-		Calendar day=(Calendar) weekStart.clone();
+		
 		double total=0;
 		double totalNumOfDays=((taskEnd.getTimeInMillis()-taskStart.getTimeInMillis())/(double)numOfMilliSecondsinDay)+1;
 //		System.out.println("Total number of Days: "+totalNumOfDays);
 		double averageTimePerDay=(totalTimeInMinutes/60.0)/totalNumOfDays;
 //		System.out.println("Average: "+averageTimePerDay);
-		for (int i=0;i<8;i++){  //Used 7 for 7 Days
+		Calendar weekEnd=(Calendar)weekStart.clone();
+		weekEnd.add(Calendar.DAY_OF_MONTH, 8); //Increase by 8 days to have the end be exclusitory
+		int days=0;
+		
+		if(taskStart.before(weekStart)&&taskEnd.before(weekStart)){
+			//do nothing
+		} 
+		                               //(Not before === after with inclusion of same day..?)
+		else if(taskStart.before(weekStart)&&(!taskEnd.before(weekStart))){
+			   
+		//starts before weekStart, ends after weekStart
+			days=daysBetween(weekStart.getTime(),taskEnd.getTime())+1;
+		}
+		
+		//starts after weekStart, ends before weekend
+		else if(!taskStart.before(weekStart)&&taskEnd.before(weekEnd)){
+			days=daysBetween(taskStart.getTime(),taskEnd.getTime())+1;
+		} 
+		
+		//starts before weekEnd, ends after weekEnd
+		else if(taskStart.before(weekEnd)&&!taskEnd.before(weekEnd)){
+			days=daysBetween(taskStart.getTime(),weekEnd.getTime())+1;
+		}    
+		
+		//starts after weekEnd, and Ends after weekend end
+		else if(!taskStart.before(weekEnd)&&!taskEnd.before(weekEnd)){
+			//do nothing
+		}
+		
+		//starts before weekStart, ends after weekEnd
+		else if(!taskStart.after(weekStart)&&!taskEnd.before(weekEnd)){
+			days=7;
+		}
+		else{
+			System.out.println("Encountered unexpected situation");
+		}
+		total=days*averageTimePerDay;
+		
+		
+		
+		
+		/*		for (int i=0;i<8;i++){  //Used 7 for 7 Days
 			if((day.after(taskStart) &&day.before(taskEnd))){
 				total+=averageTimePerDay;
 				
@@ -100,17 +145,17 @@ public class WeeklyCharts {
 			/*if(((weekStart.getTimeInMillis()+i*numOfMilliSecondsinDay)-taskStart.getTimeInMillis())>=-25
 			&& ((weekStart.getTimeInMillis()+i*numOfMilliSecondsinDay)-taskEnd.getTimeInMillis())<=25){
 				total+=averageTimePerDay;
-			}*/
+			}
 	//		System.out.println("Week Start - Task start is: "+((weekStart.getTimeInMillis()+i*numOfMilliSecondsinDay)-taskStart.getTimeInMillis()));
 	//		System.out.println("Week Start - Task End is: "+((weekStart.getTimeInMillis()+i*numOfMilliSecondsinDay)-taskEnd.getTimeInMillis()));
-		}
+		}*/
 		return total;
 	}
 	private Calendar convertTeamworkDateToCalendar(String twString){
 		Calendar newCalendar= Calendar.getInstance();
 	//	System.out.println(twString);
 		newCalendar.set(Integer.parseInt(twString.substring(0, 4)), 
-						Integer.parseInt(twString.substring(4, 6))-1, 
+						Integer.parseInt(twString.substring(4, 6))-1, //Teamwork 01=Jan, Java 01=Feb
 						Integer.parseInt(twString.substring(6, 8)));
 		
 		return newCalendar;
@@ -344,15 +389,6 @@ public class WeeklyCharts {
 	private CategoryDataset createDataset(String person ) {
 		
 		
-		
-		
-	    final String fiat = "FIAT";        
-	    final String audi = "AUDI";        
-	    final String ford = "FORD";        
-	    final String speed = "Speed";        
-	    final String millage = "Millage";        
-	    final String userrating = "User Rating";        
-	    final String safety = "safety";        
 	    final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );  
 	    
 	    double [] weeklyTotals=new double[weeks.size()];
@@ -360,7 +396,6 @@ public class WeeklyCharts {
 	    for (int i=0;i<weeklyTotals.length;i++){
 	    	weeklyTotals[i]=0;
 	    }
-	    int count=0;
 	    Calendar endWeek;
 	    for (int i=0;i<tasks.length();i++){
 	    	for(int j=0;j<weeklyTotals.length-1;j++){
@@ -368,22 +403,20 @@ public class WeeklyCharts {
 		    			if(tasks.getJSONObject(i).getString("responsible-party-summary").compareTo(person)==0){
 			    			endWeek=(Calendar) weeks.get(j+1).clone();
 							weeklyTotals[j]+=tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j);
-							if(tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j)!=0){
+						/*	if(tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j)!=0){
 								System.out.println(tasks.getJSONObject(i).get("content")+ " contributes "+
-							tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j)
-							+" to the week of "+sdf.format(weeks.get(j).getTime())+" - "+sdf.format(endWeek.getTime()));
-						}
+Debugging block					tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j)
+								+" to the week of "+sdf.format(weeks.get(j).getTime())+" - "+sdf.format(endWeek.getTime()));
+						}*/ 
 	    			}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
-					count++;
 				//	e.printStackTrace();
 				}
 	    	}
 	    }
 	    
-	    System.out.println("Could not find name "+count+" times");
-	    System.out.println(weeks.toString());
+	    //Add Totals to Graph
 	    for (int i=0;i<weeklyTotals.length-1;i++){
 	    	endWeek=(Calendar) weeks.get(i+1).clone();
 	    	dataset.addValue(weeklyTotals[i], 
@@ -400,15 +433,15 @@ public class WeeklyCharts {
 	    
 	    
 	    
-	    /*Object[] projectlist= projects.toArray();
-	    Calendar endWeek;
+	    Object[] projectlist= projects.toArray();
+	    
 		System.out.println("Size of Project list: "+projectlist.length);
 		for (int i=0;i<projectlist.length;i++){
 			for(int j=0;j<weeks.size();j++)
 			try{
 				if(Totals.get(person+(String)projectlist[i]+j)!=0){
 						endWeek=(Calendar) weeks.get(j+1).clone();
-						endWeek.add(Calendar.DAY_OF_MONTH, -1);
+				//		endWeek.add(Calendar.DAY_OF_MONTH, -1);
 						dataset.addValue(Totals.get(person+(String)projectlist[i]+j), 
 								(String)projectlist[i], 
 								sdf.format(weeks.get(j).getTime())+" - "+sdf.format(endWeek.getTime()));
@@ -420,7 +453,7 @@ public class WeeklyCharts {
 			}
 			
 		}
-		
+		/*
 		for(int i=0;i<dataset.getColumnCount();i++){
 			System.out.println("Column "+ i+" is "+dataset.getColumnKey(i)) + dataset.g;
 		}
@@ -476,6 +509,7 @@ public class WeeklyCharts {
 			         this.createDataset(person),          
 			         PlotOrientation.VERTICAL,           
 			         true, true, false);
+			
 			ChartFrame frame = new ChartFrame("test",barChart);
 			frame.pack();
 			frame.setVisible(true);
