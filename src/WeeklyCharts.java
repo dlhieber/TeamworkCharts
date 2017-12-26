@@ -403,11 +403,11 @@ public class WeeklyCharts {
 		    			if(tasks.getJSONObject(i).getString("responsible-party-summary").compareTo(person)==0){
 			    			endWeek=(Calendar) weeks.get(j+1).clone();
 							weeklyTotals[j]+=tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j);
-						/*	if(tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j)!=0){
+							if(tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j)!=0){
 								System.out.println(tasks.getJSONObject(i).get("content")+ " contributes "+
-Debugging block					tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j)
+								tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0).getDouble(j)
 								+" to the week of "+sdf.format(weeks.get(j).getTime())+" - "+sdf.format(endWeek.getTime()));
-						}*/ 
+						}
 	    			}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -509,7 +509,6 @@ Debugging block					tasks.getJSONObject(i).getJSONArray(weekKey).getJSONArray(0)
 			         this.createDataset(person),          
 			         PlotOrientation.VERTICAL,           
 			         true, true, false);
-			
 			ChartFrame frame = new ChartFrame("test",barChart);
 			frame.pack();
 			frame.setVisible(true);
