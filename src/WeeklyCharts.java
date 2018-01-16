@@ -390,14 +390,15 @@ public class WeeklyCharts {
 		
 		
 	    final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );  
-	    Calendar endWeek;
-	    /*
-	    double [] weeklyTotals=new double[weeks.size()];
 	    
+	   // double [] weeklyTotals=new double[weeks.size()];
+	    Calendar endWeek;
+	   
+	    /*
 	    for (int i=0;i<weeklyTotals.length;i++){
 	    	weeklyTotals[i]=0;
 	    }
-	  
+	    
 	    for (int i=0;i<tasks.length();i++){
 	    	for(int j=0;j<weeklyTotals.length-1;j++){
 	    		try {
@@ -426,9 +427,9 @@ public class WeeklyCharts {
 	    }
 	    
 	    
+	     */
 	    
 	    
-	    */
 	    
 	    
 	    
@@ -441,11 +442,11 @@ public class WeeklyCharts {
 			for(int j=0;j<weeks.size();j++)
 			try{
 				if(Totals.get(person+(String)projectlist[i]+j)!=0){
-				//		endWeek=(Calendar) weeks.get(j+1).clone();
+						endWeek=(Calendar) weeks.get(j+1).clone();
 				//		endWeek.add(Calendar.DAY_OF_MONTH, -1);
 						dataset.addValue(Totals.get(person+(String)projectlist[i]+j), 
 								(String)projectlist[i], 
-								sdf.format(weeks.get(j).getTime())/*+" - "+sdf.format(endWeek.getTime())*/);
+								sdf.format(weeks.get(j).getTime()));
 						
 					}
 				

@@ -1,0 +1,9 @@
+diff a/src/WeeklyCharts.java b/src/WeeklyCharts.java	(rejected hunks)
+@@ -391,6 +391,7 @@
+ 		
+ 	    final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );  
+ 	    Calendar endWeek;
++	    /*
+ 	    double [] weeklyTotals=new double[weeks.size()];
+ 	    
+ 	    for (int i=0;i<weeklyTotals.length;i++){
