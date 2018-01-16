@@ -69,13 +69,15 @@ public class OptionWindow extends JFrame {
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{116, 75, 0, 53, 50, 168};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{0.0, 1.0, 0.0, 1.0, 0.0, 1.0};
-		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_contentPane.columnWeights = new double[]{1.0, 1.0, 0.0, 1.0, 0.0, 1.0};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		JButton btnShowChart = new JButton("Show Chart");
+		JButton btnShowAllCharts = new JButton("Show All Charts");
 		
 		btnShowChart.setVisible(false);
+		btnShowAllCharts.setVisible(false);
 		JLabel lblEnterStartDate = new JLabel("Start Date (dd/mm/yyyy):");
 		GridBagConstraints gbc_lblEnterStartDate = new GridBagConstraints();
 		gbc_lblEnterStartDate.insets = new Insets(0, 0, 5, 5);
@@ -149,6 +151,7 @@ public class OptionWindow extends JFrame {
 							comboBox.addItem(people.get(i));							
 						}
 						btnShowChart.setVisible(true);
+						btnShowAllCharts.setVisible(true);
 					}else{
 						lblNewLabel.setVisible(true);
 					}
@@ -253,12 +256,29 @@ public class OptionWindow extends JFrame {
 		
 		
 		GridBagConstraints gbc_btnShowChart = new GridBagConstraints();
+		gbc_btnShowChart.insets = new Insets(0, 0, 5, 0);
 		gbc_btnShowChart.anchor = GridBagConstraints.SOUTH;
 		gbc_btnShowChart.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnShowChart.gridwidth = 6;
 		gbc_btnShowChart.gridx = 0;
 		gbc_btnShowChart.gridy = 8;
 		contentPane.add(btnShowChart, gbc_btnShowChart);
+		
+		
+		btnShowAllCharts.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (int i=0;i<comboBox.getItemCount();i++){
+					charts.showChart(comboBox.getItemAt(i));
+				}
+			}
+		});
+		GridBagConstraints gbc_btnShowAllCharts = new GridBagConstraints();
+		gbc_btnShowAllCharts.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnShowAllCharts.gridwidth = 6;
+		gbc_btnShowAllCharts.insets = new Insets(0, 0, 0, 5);
+		gbc_btnShowAllCharts.gridx = 0;
+		gbc_btnShowAllCharts.gridy = 9;
+		contentPane.add(btnShowAllCharts, gbc_btnShowAllCharts);
 	}
 	
 

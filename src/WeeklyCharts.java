@@ -451,7 +451,9 @@ public class WeeklyCharts {
 					}
 				
 				}catch(Exception e){
-				
+					dataset.addValue(0.0, 
+							"", 
+							sdf.format(weeks.get(j).getTime()));
 			}
 			
 		}
