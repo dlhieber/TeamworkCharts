@@ -61,6 +61,7 @@ public class OptionWindow extends JFrame {
 	
 	
 	public OptionWindow() throws ParseException {
+		setTitle("Chart Options (TESTING VERSION)");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(OptionWindow.class.getResource("/Logo-2016-Swirl-125.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 519, 301);
@@ -193,6 +194,7 @@ public class OptionWindow extends JFrame {
 							comboBox.addItem(people.get(i));							
 						}
 						btnShowChart.setVisible(true);
+						btnShowAllCharts.setVisible(true);
 					}else{
 						lblStartDateNot.setVisible(true);
 					}

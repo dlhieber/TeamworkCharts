@@ -391,6 +391,7 @@ public class WeeklyCharts {
 		
 	    final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );  
 	    
+	    
 	   // double [] weeklyTotals=new double[weeks.size()];
 	    Calendar endWeek;
 	   
@@ -437,7 +438,7 @@ public class WeeklyCharts {
 	    
 	    Object[] projectlist= projects.toArray();
 	    
-		System.out.println("Size of Project list: "+projectlist.length);
+	//	System.out.println("Size of Project list: "+projectlist.length);
 		for (int i=0;i<projectlist.length;i++){
 			for(int j=0;j<weeks.size();j++)
 			try{
@@ -513,7 +514,8 @@ public class WeeklyCharts {
 			         this.createDataset(person),          
 			         PlotOrientation.VERTICAL,           
 			         true, true, false);
-			ChartFrame frame = new ChartFrame("test",barChart);
+			
+			ChartFrame frame = new ChartFrame(person+"'s Chart (TESTING VERSION)",barChart);
 			frame.pack();
 			frame.setVisible(true);
 			
