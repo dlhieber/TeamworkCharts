@@ -230,10 +230,10 @@ public class WeeklyCharts {
 		try {
 			//Beginning Page
 			int page=1;
-			URL url= new URL("http://pbok.teamwork.com/tasks.json?page="+page);
+			URL url= new URL("http://iamdanonline.teamwork.com/tasks.json?page="+page);
 			
 		    //Authentication Code
-			String name = "sander739yellow";
+			String name = "twp_bGd6yIZ8ANS0TVB61V0QVOSHJ9rg";
 			String password = "#";
 			String authString = name + ":" + password;
 			System.out.println("auth string: " + authString);
